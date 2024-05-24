@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Featured Movies</title>
+    <link rel="stylesheet" href="movies.css">
+</head>
+<body>
+    <button onclick="location.href='index.html'">back to start</button>
+    <div id="main-page" class="container">
+        <h1>Featured Movies</h1>
+        <div id="movie-list" class="content-grid"></div>
+    </div>
+
+    <div id="details-page" class="container" style="display:none;">
+    <div id="movie-details"></div>
+    <button onclick="location.href='movies.html'">back</button>
+
+    </div>
+
+    <script type="module">
+        import movies from './movies.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const movieList = document.getElementById('movie-list');
+            movies.forEach((movie, index) => {
+                const movieElement = document.createElement('div');
+                movieElement.className = 'item';
+                movieElement.innerHTML = `
+                    <img src="${movie.picture}"  alt="${movie.name}">
+                    <div class="details">
+                        <h3>${movie.name}</h3>
+                    </div>
+                `;
+                movieElement.onclick = () => {
+                    showDetails(index);
+                };
+                movieList.appendChild(movieElement);
+            });
+
+            function showDetails(index) {
+                const mainPage = document.getElementById('main-page');
+                const detailsPage = document.getElementById('details-page');
+                const movie = movies[index];
+
+                if (!movie) {
+                    document.getElementById('movie-details').innerHTML = '<p>Movie not found.</p>';
+                    return;
+                }
+
+                const movieDetails = document.getElementById('movie-details');
+                movieDetails.innerHTML = `
+                    <h2>${movie.name}</h2>
+                    <img src="${movie.picture}"  alt="${movie.name}" style= "height:400px;">
+                    <p>${movie.description}</p>
+                    <p><strong>Release Date:</strong> ${movie.releaseDate}</p>
+                    <p><strong>Genre:</strong> ${movie.genre}</p>
+                    <p><strong>Country:</strong> ${movie.country}</p>
+                    <a href="${movie.trailer}" target="_blank">Watch Trailer</a>
+                    <video controls>
+                        <source src="${movie.videoPath}"
+                    </video>
+                `;
+
+                mainPage.style.display = 'none';
+                detailsPage.style.display = 'block';
+            }
+
+            const selectedMovieIndex = localStorage.getItem('selectedMovieIndex');
+            if (selectedMovieIndex !== null) {
+                showDetails(selectedMovieIndex);
+                localStorage.removeItem('selectedMovieIndex');
+            }
+
+            window.goBack = function() {
+                document.getElementById('main-page').style.display = 'block';
+                document.getElementById('details-page').style.display = 'none';
+            };
+        });
+    </script>
+</body>
+</html>

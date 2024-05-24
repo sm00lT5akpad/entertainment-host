@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Featured Series</title>
+    <link rel="stylesheet" href="series.css">
+
+    <script type="text/javascript">
+        
+    </script>
+</head>
+<body>
+    <button onclick="location.href='index.html'">back to start </button>
+    
+    <div id="main-page" class="container">
+        
+        <h1>Featured Series</h1>
+        <div id="series-list" class="content-grid"></div>
+        
+    </div>
+   
+
+    <div id="details-page" class="container" style="display:none;"> 
+        
+        <div id="series-details"></div>
+        <button onclick="location.href='series.html'">back</button>
+    </div>
+
+    <script type="module">
+        import series from './series.js';
+
+        // Define the goBack function globally
+        window.goBack = function() {
+            document.getElementById('main-page').style.display = 'block';
+            document.getElementById('details-page').style.display = 'none';
+            localStorage.removeItem('selectedSeriesIndex');
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const seriesList = document.getElementById('series-list');
+            series.forEach((serie, index) => {
+                const seriesElement = document.createElement('div');
+                seriesElement.className = 'item';
+                seriesElement.innerHTML = `
+                    <img src="${serie.picture}" alt="${serie.name} ">
+                    <div class="details">
+                        <h3>${serie.name}</h3>
+                       
+                    </div>
+                `;
+                seriesElement.onclick = () => {
+                    showDetails(index);
+                };
+                seriesList.appendChild(seriesElement);
+            });
+
+            function showDetails(index) {
+                const mainPage = document.getElementById('main-page');
+                const detailsPage = document.getElementById('details-page');
+                const serie = series[index];
+
+                if (!serie) {
+                    document.getElementById('series-details').innerHTML = '<p>Series not found.</p>';
+                    return;
+                }
+
+                const seriesDetails = document.getElementById('series-details');
+                seriesDetails.innerHTML = `
+                    <h2>${serie.name}</h2>
+                    <img src="${serie.picture}" alt="${serie.name}" style= "height:400px;">
+                    <p>${serie.description}</p>
+                    <p><strong>Release Date:</strong> ${serie.releaseDate}</p>
+                    <p><strong>Genre:</strong> ${serie.genre}</p>
+                    <p><strong>Country:</strong> ${serie.country}</p>
+                    <a href="${serie.trailer}" target="_blank">Watch Trailer</a>
+                `;
+
+                serie.seasons.forEach(season => {
+                    const seasonElement = document.createElement('div');
+                    seasonElement.className = 'season';
+                    seasonElement.innerHTML = `<h3>Season ${season.seasonNumber}</h3>`;
+                    
+                    const episodesList = document.createElement('ul');
+                    season.episodes.forEach(episode => {
+                        const episodeElement = document.createElement('li');
+                        episodeElement.innerHTML = `<a href="${episode.videoPath}" target="">${episode.title}</a>`;
+                        episodesList.appendChild(episodeElement);
+                    });
+
+                    seasonElement.appendChild(episodesList);
+                    seriesDetails.appendChild(seasonElement);
+                });
+
+                mainPage.style.display = 'none';
+                detailsPage.style.display = 'block';
+
+                
+                localStorage.setItem('selectedSeriesIndex', index);
+            }
+
+            const selectedSeriesIndex = localStorage.getItem('selectedSeriesIndex');
+            if (selectedSeriesIndex !== null) {
+                showDetails(selectedSeriesIndex);
+                localStorage.removeItem('selectedSeriesIndex');
+            }
+        });
+    </script>
+</body>
+</html>

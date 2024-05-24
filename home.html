@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Featured Movies and Series</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Featured Movies and Series</h1>
+        
+        <h2>Movies</h2>
+        <div class="slider" id="movie-slider"></div>
+        <a href="movies.html" class="show-more">Show More Movies</a>
+
+        <h2>Series</h2>
+        <div class="slider" id="series-slider"></div>
+        <a href="series.html" class="show-more">Show More Series</a>
+    </div>
+
+    <script type="module">
+        import movies from './movies.js';
+        import series from './series.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Movies Slider
+            const movieSlider = document.getElementById('movie-slider');
+            movies.slice(0, 9).forEach((movie, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.innerHTML = `
+                    <img src="${movie.picture}" alt="${movie.name}">
+                    <div class="details">
+                        <h3>${movie.name}</h3>
+                        
+                    </div>
+                `;
+                slide.addEventListener('click', () => {
+                    localStorage.setItem('selectedMovieIndex', index);
+                    window.location.href = 'movies.html';
+                });
+                movieSlider.appendChild(slide);
+            });
+
+            // Series Slider
+            const seriesSlider = document.getElementById('series-slider');
+            series.slice(0, 15).forEach((serie, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.innerHTML = `
+                    <img src="${serie.picture}" alt="${serie.name}">
+                    <div class="details">
+                        <h3>${serie.name}</h3>
+                        
+                    </div>
+                `;
+                slide.addEventListener('click', () => {
+                    localStorage.setItem('selectedSeriesIndex', index);
+                    window.location.href = 'series.html';
+                });
+                seriesSlider.appendChild(slide);
+            });
+        });
+    </script>
+</body>
+</html>
